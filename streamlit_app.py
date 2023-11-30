@@ -30,8 +30,7 @@ def get_fruityvice_data(this_fruit_choice):
     fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + this_fruit_choice)
     # Use pandas to normalise the fruityvice response and format
     fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
-    # Display the pandas normalised dataframe.
-    streamlit.dataframe(fruityvice_normalized)
+    # Return data from function
     return fruityvice_normalized
     
 # Display fruityvice stuff
@@ -41,7 +40,9 @@ try:
     if not fruit_choice:
         streamlit.error("please select a fruit to get info")
     else:
+        # Call function on fruit
         back_from_function = get_fruityvice_data(fruit_choice)
+        # Display choice
         streamlit.dataframe(back_from_function)
 except URLError as e:
   streamlit.error()
