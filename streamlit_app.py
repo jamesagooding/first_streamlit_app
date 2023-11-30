@@ -22,23 +22,27 @@ my_fruit_list = my_fruit_list.set_index('Fruit')
 # Added two defaults to show users how to use the fruit picker :)
 fruits_selected = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.index),['Avocado','Strawberries'])
 fruits_to_show = my_fruit_list.loc[fruits_selected]
-
 # Display the table on the page.
 streamlit.dataframe(fruits_to_show)
 
-# New section to display fruityvice API response
+# Fruityvice API call function
+def get_Fruityvice_data(this_fruit_choice):
+    fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + this_fruit_choice)
+    # Use pandas to normalise the fruityvice response and format
+    fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
+    # Display the pandas normalised dataframe.
+    streamlit.dataframe(fruityvice_normalized)
+    return fruityvice_normalized
+    
+# Display fruityvice stuff
 streamlit.header("Fruityvice Fruit Advice!")
 try:
     fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
     if not fruit_choice:
         streamlit.error("please select a fruit to get info")
     else:
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-        # Use pandas to normalise the fruityvice response and format
-        fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
-        # Display the pandas normalised dataframe.
-        streamlit.dataframe(fruityvice_normalized)
-
+        back_from_function = get_fruityvice_data(fruit_choice)
+        streamlit.dataframe(back_from_function)
 except URLError as e:
   streamlit.error()
 
