@@ -26,17 +26,21 @@ fruits_to_show = my_fruit_list.loc[fruits_selected]
 # Display the table on the page.
 streamlit.dataframe(fruits_to_show)
 
-# Prompt user to get info on fruit
-fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
-streamlit.write('The user entered ', fruit_choice)
-
 # New section to display fruityvice API response
 streamlit.header("Fruityvice Fruit Advice!")
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-# Use pandas to normalise the fruityvice response and format
-fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
-# Display the pandas normalised dataframe.
-streamlit.dataframe(fruityvice_normalized)
+try:
+    fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
+    if not fruit_choice:
+        streamlit.error("please select a fruit to get info")
+    else
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+        # Use pandas to normalise the fruityvice response and format
+        fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
+        # Display the pandas normalised dataframe.
+        streamlit.dataframe(fruityvice_normalized)
+
+except URLError as e:
+  streamlit.error()
 
 # New snowflake connector
 streamlit.stop()
